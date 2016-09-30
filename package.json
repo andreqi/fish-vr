@@ -1,0 +1,26 @@
+{
+  "name": "fish-vr",
+  "version": "1.0.0",
+  "description": "Be like a group of fish, for realz",
+  "main": "index.js",
+  "dependencies": {
+    "babel-plugin-transform-flow-strip-types": "^6.14.0",
+    "three": "*",
+    "webpack": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "watch": "babel --watch=./src --out-dir=./build & webpack --watch build/other.js bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andreqi/fish-vr.git"
+  },
+  "keywords": [],
+  "author": "andreq - juanchi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andreqi/fish-vr/issues"
+  },
+  "homepage": "https://github.com/andreqi/fish-vr"
+}
