@@ -4,7 +4,8 @@
   "description": "Be like a group of fish, for realz",
   "main": "index.js",
   "dependencies": {
-    "three": "^0.81.2"
+    "three": "^0.81.2",
+    "three-orbit-controls": "^1.16.1"
   },
   "devDependencies": {
     "babel-core": "^6.16.0",
