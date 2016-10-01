@@ -1,12 +1,12 @@
 // @flow
 
-const test = require('./test.js');
+import test from './test';
 const three = require('three');
 
-var x: number = 1;
-var y: number = x + '';
+const x: number = 5;
+const y: number = x + 4;
 
-var juanchi = 'la vale';
-console.log(1);
+const juanchi = 'la vale';
+console.log('kappa 123');
 
 module.exports = juanchi;

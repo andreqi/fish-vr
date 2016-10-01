@@ -4,13 +4,19 @@
   "description": "Be like a group of fish, for realz",
   "main": "index.js",
   "dependencies": {
-    "babel-plugin-transform-flow-strip-types": "^6.14.0",
-    "three": "*",
-    "webpack": "*"
+    "three": "^0.81.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.16.0",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-flow-strip-types": "^6.14.0",
+    "babel-preset-es2015": "^6.16.0",
+    "flow-bin": "^0.33.0",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
+  },
   "scripts": {
-    "watch": "babel --watch=./src --out-dir=./build & webpack --watch build/other.js bundle.js"
+    "watch": "flow & webpack-dev-server"
   },
   "repository": {
     "type": "git",
