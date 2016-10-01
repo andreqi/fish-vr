@@ -11,7 +11,7 @@ export type ParticlesType = {
   },
 };
 
-function generateParticles() {
+function generateParticles(): ParticlesType {
   const material = new three.MeshPhongMaterial({
     color: 0xFFFFcc,
     shading: three.SmoothShading
@@ -22,25 +22,12 @@ function generateParticles() {
   const particles = new three.Object3D();
   for (let _x = -gridSize; _x <= gridSize; _x++) {
     for (let _y = -gridSize; _y <= gridSize; _y++) {
-      //for (let _z = -gridSize; _z <= gridSize; _z++) {
-        const mesh = new three.Mesh(geo, material)
-        mesh.position.set(_x, 0, _y)
-        particles.add(mesh);
-      //}
+      const mesh = new three.Mesh(geo, material)
+      mesh.position.set(_x, 0, _y)
+      particles.add(mesh);
     }
   }
-  // if you want to group, you loose movement of particles
-  // merge
-  /*const geom = new three.Geometry()
-  for (let i = 0; i < particles.children.length; i++) {
-    particles.children[i].updateMatrix();
-    geom.merge(
-      particles.children[i].geometry,
-      particles.children[i].matrix
-    );
-  }*/
-  //const group = new three.Mesh(particles, material);
-  console.log(particles);
+
   return {
     object: particles,
     particles,
