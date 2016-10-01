@@ -16,7 +16,7 @@
     "webpack-dev-server": "^1.16.1"
   },
   "scripts": {
-    "watch": "webpack-dev-server"
+    "watch": "flow & webpack-dev-server"
   },
   "repository": {
     "type": "git",

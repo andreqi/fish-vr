@@ -3,6 +3,7 @@
 .*/bundle.js
 
 [include]
+./src/*.js
 
 [libs]
 lib
