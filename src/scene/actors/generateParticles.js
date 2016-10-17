@@ -1,6 +1,7 @@
 // @flow
 
 const three = require('three');
+const FishTorus = require('./FishTorus.js');
 
 type ThreeGeometry = any;
 
@@ -16,16 +17,15 @@ function generateParticles(): ParticlesType {
     color: 0xFFFFcc,
     shading: three.SmoothShading
   });
+
   // cubes
-  const gridSize = 40;
   const geo = new three.BoxGeometry(.2, .2, .2, 1, 1, 1)
   const particles = new three.Object3D();
-  for (let _x = -gridSize; _x <= gridSize; _x++) {
-    for (let _y = -gridSize; _y <= gridSize; _y++) {
-      const mesh = new three.Mesh(geo, material)
-      mesh.position.set(_x, 0, _y)
-      particles.add(mesh);
-    }
+  for (let idx = 0; idx < 10000; idx++) {
+    const mesh = new three.Mesh(geo, material);
+    const pos = FishTorus.getRandomPoint();
+    mesh.position.set(pos.x, pos.y, pos.z);
+    particles.add(mesh);
   }
 
   return {
