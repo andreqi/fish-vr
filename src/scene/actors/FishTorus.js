@@ -6,7 +6,7 @@ type Point = {
   z: number,
 };
 
-const EPS = 0.001;
+const EPS = 0.5;
 
 function applyPerimetric(
   u: number,

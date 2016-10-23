@@ -19,9 +19,9 @@ function generateParticles(): ParticlesType {
   });
 
   // cubes
-  const geo = new three.BoxGeometry(.2, .2, .2, 1, 1, 1)
+  const geo = new three.CylinderGeometry(0, .2, 1, 3);
   const particles = new three.Object3D();
-  for (let idx = 0; idx < 10000; idx++) {
+  for (let idx = 0; idx < 1000; idx++) {
     const mesh = new three.Mesh(geo, material);
     const pos = FishTorus.getRandomPoint();
     mesh.position.set(pos.x, pos.y, pos.z);
