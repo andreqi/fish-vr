@@ -18,7 +18,7 @@ function generateParticles(): ParticlesType {
     shading: three.SmoothShading
   });
 
-  // cubes
+  // boids
   const geo = new three.CylinderGeometry(0, .2, 1, 3);
   const particles = new three.Object3D();
   for (let idx = 0; idx < 1000; idx++) {
