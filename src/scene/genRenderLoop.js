@@ -1,18 +1,18 @@
 // @flow
 
-import type {AvailableActors} from './setup.js';
 import type Scenario from '../Scenario.js';
 
 function genRenderLoop(
-  scenario: Scenario,
-  actors: AvailableActors,
+  {camera, controls, renderer, scene}: Scenario,
+  update: (t: number) => void,
 ): () => void {
   let t = 0;
-  return function render() {
-    requestAnimationFrame(render);
-    scenario.controls.update();
-    scenario.renderer.render(scenario.scene, scenario.camera);
+  return function renderLoop() {
+    controls.update();
+    update(t);
+    renderer.render(scene, camera);
     t += 1/60;
+    requestAnimationFrame(renderLoop);
   }
 }
 

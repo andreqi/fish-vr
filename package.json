@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "three": "^0.81.2",
-    "three-orbit-controls": "^1.16.1"
+    "three-orbit-controls": "^72.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.16.0",

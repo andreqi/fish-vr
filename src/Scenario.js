@@ -44,9 +44,7 @@ class Scenario {
 
     // controls
     this.controls = new OrbitControls(this.camera);
-    this.controls.autoRotate = true;
-    this.controls.autoRotateSpeed = -1
-
+    
     if (WEBVR.isAvailable() === true) {
       this.controls = new three.VRControls(this.camera);
       this.controls.standing = false;
@@ -63,7 +61,7 @@ class Scenario {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
     window.addEventListener('resize', onWindowResize, false);
-    
+
     // window.addEventListener('deviceorientation', setOrientationControls, true);
   }
 }
