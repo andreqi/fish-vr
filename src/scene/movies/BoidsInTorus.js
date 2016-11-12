@@ -17,7 +17,12 @@ type AvailableActors = {
   directionalLight: LightType,
 };
 
-function setup(): AvailableActors {
+type State = {
+  actors: AvailableActors,
+  environment: {min_time: number, rotation: {x: number, y: number, z:number}},
+}
+
+function setup(): State {
   const actors: AvailableActors = {
     torus: generateTorus(),
     particles: generateParticles(),
@@ -26,30 +31,32 @@ function setup(): AvailableActors {
     },
     directionalLight: generateDirectionalLigth(),
   };
-  return actors;
+
+  return {
+    actors,
+    environment: {
+      min_time: 0,
+      rotation: {x: 0, y: 0, z: 0},
+    },
+  };
 }
 
+function rotateBoids(t: number, {actors, environment}: State): void {
+  const smooth_time = 5.0;
 
-let MIN_TIME = 0;
-const SMOOTH_TIME = 5.0;
-let ROTATIONS = {
-  x: 0,
-  y: 0,
-  z: 0,
-};
-
-function rotateBoids(t: number, {particles}: AvailableActors): void {
-  if (t > MIN_TIME) {
-    ROTATIONS = {
+  if (t > environment.min_time) {
+    environment.rotation = {
       x: (0.5 - Math.random()),
       y: (0.5 - Math.random()),
       z: (0.5 - Math.random()),
     }
-    MIN_TIME += SMOOTH_TIME;
+    environment.min_time += smooth_time;
   }
   const coordinates = ['x', 'y', 'z'];
+  const {rotation} = environment;
+  const {particles} = actors;
   particles.particles.children.forEach(boid =>
-    coordinates.forEach(dim => boid.rotation[dim] += ROTATIONS[dim] / 50)
+    coordinates.forEach(dim => boid.rotation[dim] += rotation[dim] / 50)
   );
 }
 

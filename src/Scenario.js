@@ -21,7 +21,6 @@ class Scenario {
 
   constructor() {
     // renderer
-    console.log(three);
     this.renderer = new three.WebGLRenderer({antialias: true});
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -44,7 +43,7 @@ class Scenario {
 
     // controls
     this.controls = new OrbitControls(this.camera);
-    
+
     if (WEBVR.isAvailable() === true) {
       this.controls = new three.VRControls(this.camera);
       this.controls.standing = false;
