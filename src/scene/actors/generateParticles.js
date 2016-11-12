@@ -1,9 +1,9 @@
 // @flow
 
+import type {ThreeGeometry} from './ThreeTypes.js';
+
 const three = require('three');
 const FishTorus = require('./FishTorus.js');
-
-type ThreeGeometry = any;
 
 export type ParticlesType = {
   object: ThreeGeometry,

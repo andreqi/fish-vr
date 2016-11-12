@@ -15,7 +15,7 @@ function generateTorus(): TorusType {
     wireframe: true,
   });
   const object = new three.Mesh(geometry, material);
-  object.position.set(0, 0, 0)
+  object.position.set(0, 0, 0);
   return {object};
 }
 
