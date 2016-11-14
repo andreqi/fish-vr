@@ -23,14 +23,9 @@ const main = ({setup, update}, deps, keyboard) => {
   return {scenario, state};
 };
 
-const textureLoader = new three.TextureLoader();
-let world;
 const keyboard: {[key: string]: boolean} = {};
-textureLoader.load('assets/cubemap.jpg', function (texture) {
-  texture.mapping = three.UVMapping;
-  world = main(ManualControlBoid, {texture}, keyboard);
-  window.world = world;
-})
+const world = main(ManualControlBoid, {}, keyboard);
+window.world = world;
 
 // setup keyboard support
 document.addEventListener('keydown', (e: KeyboardEvent) => {
