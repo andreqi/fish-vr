@@ -25,15 +25,25 @@ type State = {
   env: {},
 };
 
-function generateCubeMap(texture): ThreeMesh {
-  const mesh = new three.Mesh(
-    new three.SphereGeometry( 500, 32, 16 ),
-    new three.MeshBasicMaterial({
-      map: texture,
-    }),
-  );
-  mesh.scale.x = -1;
-  return mesh;
+function generateCubeMap(): ThreeMesh {
+  const grid = new three.Object3D();
+  const size = 20.0;
+  const geometry = new three.BoxGeometry(size, size, size, 1, 1, 1);
+  const texture = new three.MeshPhongMaterial({
+    color: 0xFFFFFF,
+    wireframe: true,
+  });
+  const times = 1;
+  for (let idx = -times; idx <= times; idx++) {
+    for (let idy = -times; idy <= times; idy++) {
+      for (let idz = -times; idz <= times; idz++) {
+        const mesh = new three.Mesh(geometry, texture);
+        mesh.position.set(idx * size, idy * size, idz * size)
+        grid.add(mesh);
+      }
+    }
+  }
+  return grid;
 }
 
 function setup(_: any, {texture}: any): State {
@@ -61,6 +71,7 @@ function operateBoid(
   {actors, env}: State,
   keyboard: {[key: string]: boolean},
 ): void {
+  actors.boid.model.updateFromKeyboard(keyboard);
 }
 
 module.exports = {
