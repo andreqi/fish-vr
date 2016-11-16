@@ -1,6 +1,6 @@
 // @flow
 
-import type {ThreeMesh} from './ThreeTypes.js';
+import type {ThreeMesh, ThreeVector3} from './ThreeTypes.js';
 
 const three = require('three');
 
@@ -21,10 +21,19 @@ const ROTATION_MAP = {
   [KEYS.DIR_DOWN]: {x: 0, y: -ANGLE, z: 0},
 };
 
+type Point = {
+  x: number,
+  y: number,
+  z: number,
+};
+
 class Boid {
   _mesh: ThreeMesh;
 
-  constructor() {
+  constructor(
+    position: Point = {x: 0, y: 0, z: 0},
+    rotation: Point = {x: 0, y: 0, z: 0},
+  ) {
     const material = new three.MeshPhongMaterial({
       color: 0xFFFFcc,
       shading: three.SmoothShading,
@@ -42,7 +51,10 @@ class Boid {
     );
 
     this._mesh = new three.Mesh(geo, material);
-    this._mesh.position.set(0, 0, 0);
+    this._mesh.position.set(position.x, position.y, position.z);
+    ['x', 'y', 'z'].forEach(
+      dim => this._mesh.rotation[dim] = rotation[dim],
+    );
   }
 
   getMesh(): ThreeMesh {
@@ -55,8 +67,15 @@ class Boid {
       .forEach(key => this._rotateBoid(ROTATION_MAP[key]));
 
     if (keyboard[KEYS.MOVE]) {
-      this._moveBoid();
+      this.move();
     }
+  }
+
+  updateFromVector(vector: ThreeVector3): void {
+    const worldDirection = this._mesh.getWorldDirection();
+    this._mesh.lookAt(
+      vector.add(worldDirection).add(this._mesh.position)
+    );
   }
 
   _rotateBoid({x, y, z}: {x: number, y: number, z: number}): void {
@@ -65,9 +84,9 @@ class Boid {
     this._mesh.rotation.z += z;
   }
 
-  _moveBoid(): void {
+  move(): void {
     const {position} = this._mesh;
-    const velocity = 1 / 256.0;
+    const velocity = 1 / 10.0;
     const direction = this._mesh.getWorldDirection();
     ['x', 'y', 'z'].forEach(
       dim => position[dim] += direction[dim] * velocity

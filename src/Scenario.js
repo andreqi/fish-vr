@@ -34,9 +34,9 @@ class Scenario {
       90, // angle adjust perspective
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      100
     );
-    this.camera.position.set(0, 0, 3);
+    this.camera.position.set(0, 0, 30);
     this.camera.focalLength = this.camera.position.distanceTo(
       this.scene.position
     );

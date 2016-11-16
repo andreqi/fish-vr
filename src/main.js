@@ -2,6 +2,7 @@
 
 const BoidsInTorus = require('./scene/movies/BoidsInTorus.js');
 const ManualControlBoid = require('./scene/movies/ManualControlBoid.js');
+const BoidsWithMovement = require('./scene/movies/BoidsWithMovement.js');
 const Scenario = require('./Scenario.js');
 
 const three = require('three');
@@ -24,7 +25,7 @@ const main = ({setup, update}, deps, keyboard) => {
 };
 
 const keyboard: {[key: string]: boolean} = {};
-const world = main(ManualControlBoid, {}, keyboard);
+const world = main(BoidsWithMovement, {}, keyboard);
 window.world = world;
 
 // setup keyboard support
