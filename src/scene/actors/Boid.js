@@ -27,13 +27,16 @@ type Point = {
   z: number,
 };
 
+let CNT = 10;
+
 class Boid {
   _mesh: ThreeMesh;
-
+  _key: number;
   constructor(
     position: Point = {x: 0, y: 0, z: 0},
     rotation: Point = {x: 0, y: 0, z: 0},
   ) {
+    this._key = CNT++;
     const material = new three.MeshPhongMaterial({
       color: 0xFFFFcc,
       shading: three.SmoothShading,
@@ -59,6 +62,10 @@ class Boid {
 
   getMesh(): ThreeMesh {
     return this._mesh;
+  }
+
+  equals(boid: Boid): boolean {
+    return this._key === boid._key;
   }
 
   updateFromKeyboard(keyboard: {[key: string]: boolean}): void {
