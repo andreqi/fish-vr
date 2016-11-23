@@ -25,9 +25,17 @@ const main = ({setup, update}, deps, keyboard) => {
 };
 
 const keyboard: {[key: string]: boolean} = {};
-const world = main(BoidsWithMovement, {}, keyboard);
+const deps = {
+  active_neighbor_radius: 5,
+  separation_weight: 90,
+  alignment_weight: 250,
+  surface_weight: 1900,
+  cohesion_weight: 6,
+};
+const world = main(BoidsWithMovement, deps, keyboard);
 window.world = world;
 window.three = three;
+window.deps = deps;
 
 // setup keyboard support
 document.addEventListener('keydown', (e: KeyboardEvent) => {

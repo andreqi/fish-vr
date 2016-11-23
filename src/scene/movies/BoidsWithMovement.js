@@ -23,10 +23,18 @@ type AvailableActors = {
   directionalLight: LightType,
 };
 
+type Environment = {
+  active_neighbor_radius: number,
+  separation_weight: number,
+  alignment_weight: number,
+  surface_weight: number,
+  cohesion_weight: number,
+};
+
 type State = {
   actors: AvailableActors,
-  environment: {min_time: number, rotation: {x: number, y: number, z:number}},
-}
+  environment: Environment,
+};
 
 function getRandomRotation(): {x: number, y: number, z: number} {
   return {
@@ -63,7 +71,7 @@ function generateSphere(): {object: ThreeMesh} {
   return {object: new three.Mesh(geometry, material)}
 }
 
-function setup(): State {
+function setup(_: any, deps: Environment): State {
   const actors: AvailableActors = {
     // sphere: generateSphere(),
     boids: generateBoids(),
@@ -75,49 +83,39 @@ function setup(): State {
 
   return {
     actors,
-    environment: {
-      min_time: 0,
-      rotation: {x: 0, y: 0, z: 0},
-    },
+    environment: deps,
   };
 }
 
-const ACTIVE_NEIGHBOR_RADIUS = 5;
-const SEPARATION_WEIGHT = 90;
-const ALIGHTMENT_WEIGHT = 250;
-const SURFACE_WEIGHT = 1900;
-const COHESION_WEIGHT = 6;
 
 function update(t: number, {actors, environment}: State): void {
   const {models} = actors.boids;
-  optimizedFlocking(models);
+  optimizedFlocking(models, environment);
   models.forEach(model => model.move());
 }
 
-function isNeighbor(a: Boid, b: Boid): boolean {
+function isNeighbor(a: Boid, b: Boid, r: number): boolean {
   return !a.equals(b) &&
-    a.getMesh().position.distanceTo(
-      b.getMesh().position
-    ) < ACTIVE_NEIGHBOR_RADIUS;
+    a.getMesh().position.distanceTo(b.getMesh().position) < r;
 }
 
-function scale(x): number {
-  return Math.floor(x / ACTIVE_NEIGHBOR_RADIUS);
+function scale(x, r): number {
+  return Math.floor(x / r);
 }
 
 function getKey({x, y, z}): number {
   return x * 7901 + 7907 * y + 7919 * z;
 }
 
-function optimizedFlocking(models: Array<Boid>): void {
+function optimizedFlocking(models: Array<Boid>, env: Environment): void {
   const cache = new Map();
   for (let idx = 0; idx < models.length; idx++) {
     const model = models[idx];
     const {position} = model.getMesh();
     const key = getKey({
-      x: scale(position.x),
-      y: scale(position.y),
-      z: scale(position.z),
+      x: scale(position.x, env.active_neighbor_radius),
+      y: scale(position.y, env.active_neighbor_radius),
+      z: scale(position.z, env.active_neighbor_radius),
     });
     const list = cache.get(key) || [];
     list.push(model);
@@ -128,9 +126,9 @@ function optimizedFlocking(models: Array<Boid>): void {
     const model = models[idx];
     const {position} = model.getMesh();
     const scaled = {
-      x: scale(position.x),
-      y: scale(position.y),
-      z: scale(position.z),
+      x: scale(position.x, env.active_neighbor_radius),
+      y: scale(position.y, env.active_neighbor_radius),
+      z: scale(position.z, env.active_neighbor_radius),
     };
     const neighbors = [];
     let empty = 0;
@@ -145,18 +143,18 @@ function optimizedFlocking(models: Array<Boid>): void {
           const potentialNeighbors = cache.get(key) || [];
           for (let it = 0; it < potentialNeighbors.length; it++) {
             const p = potentialNeighbors[it];
-            if (isNeighbor(model, p)) {
+            if (isNeighbor(model, p, env.active_neighbor_radius)) {
               neighbors.push(p);
             }
           }
         }
       }
     }
-    applyFlocking(model, neighbors);
+    applyFlocking(model, neighbors, env);
   }
 }
 
-function naiveFlocking(models: Array<Boid>): void {
+function naiveFlocking(models: Array<Boid>, env: Environment): void {
   for (let idx = 0; idx < models.length; idx++) {
     const neighbors = [];
     const activePos = models[idx].getMesh().position;
@@ -166,15 +164,24 @@ function naiveFlocking(models: Array<Boid>): void {
       }
       const neighborPos = models[idy].getMesh().position;
       const distance = neighborPos.distanceTo(activePos);
-      if (distance < ACTIVE_NEIGHBOR_RADIUS) {
+      if (distance < env.active_neighbor_radius) {
         neighbors.push(models[idy]);
       }
     }
-    applyFlocking(models[idx], neighbors);
+    applyFlocking(models[idx], neighbors, env);
   }
 }
 
-function applyFlocking(active: Boid, neighbors: Array<Boid>): void {
+function applyFlocking(
+  active: Boid,
+  neighbors: Array<Boid>,
+  {
+    alignment_weight,
+    cohesion_weight,
+    separation_weight,
+    surface_weight,
+  }: Environment,
+): void {
   if (!neighbors.length) {
     return;
   }
@@ -194,11 +201,11 @@ function applyFlocking(active: Boid, neighbors: Array<Boid>): void {
   }
 
   const surface = new three.Vector3(0, 0, 0).add(activePos);
-  surface.multiplyScalar(-1.0/SURFACE_WEIGHT);
+  surface.multiplyScalar(-1.0/surface_weight);
   cohesion.multiplyScalar(-1.0/(neighbors.length + 1)).add(activePos).multiplyScalar(-1.0);
-  separation.multiplyScalar(1.0/SEPARATION_WEIGHT);
-  cohesion.multiplyScalar(1.0/COHESION_WEIGHT);
-  alignment.multiplyScalar(1.0/ALIGHTMENT_WEIGHT);
+  separation.multiplyScalar(1.0/separation_weight);
+  cohesion.multiplyScalar(1.0/cohesion_weight);
+  alignment.multiplyScalar(1.0/alignment_weight);
   active.updateFromVector(
     separation.add(cohesion).add(alignment).add(surface),
   );
