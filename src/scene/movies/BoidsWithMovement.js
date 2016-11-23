@@ -39,7 +39,7 @@ function getRandomRotation(): {x: number, y: number, z: number} {
 function generateBoids(): {object: ThreeMesh, models: Array<Boid>} {
   const models: Array<Boid> = [];
   const object = new three.Object3D();
-  for (let idx = 0; idx < 1500; idx++) {
+  for (let idx = 0; idx < 1000; idx++) {
     models.push(
       new Boid(
         FishTorus.getRandomPoint(),

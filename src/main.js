@@ -27,6 +27,7 @@ const main = ({setup, update}, deps, keyboard) => {
 const keyboard: {[key: string]: boolean} = {};
 const world = main(BoidsWithMovement, {}, keyboard);
 window.world = world;
+window.three = three;
 
 // setup keyboard support
 document.addEventListener('keydown', (e: KeyboardEvent) => {
