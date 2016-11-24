@@ -9,6 +9,7 @@ import type Finder from '../finders/Finder.js';
 const Boid = require('../actors/Boid.js');
 const FishTorus = require('../actors/FishTorus.js');
 const NaiveFinder = require('../finders/NaiveFinder.js');
+const BucketFinder = require('../finders/BucketFinder.js');
 
 const three = require('three');
 
@@ -16,7 +17,6 @@ const generateParticles = require('../actors/generateParticles.js');
 const generateDirectionalLigth = require('../actors/generateDirectionalLigth.js');
 
 type AvailableActors = {
-//  sphere: {object: ThreeMesh},
   boids: {
     object: ThreeMesh,
     models: Array<Boid>,
@@ -79,73 +79,15 @@ function setup(_: any, deps: Environment): State {
   };
 }
 
-
 function update(t: number, {actors, environment}: State): void {
   const {models} = actors.boids;
-  flocking(models, new NaiveFinder(models), environment);
+  flocking(
+    models,
+    new BucketFinder(models, environment),
+    environment,
+  );
   for (let idx = 0; idx < models.length; idx++) {
     models[idx].move();
-  }
-}
-
-function isNeighbor(a: Boid, b: Boid, r: number): boolean {
-  return !a.equals(b) &&
-    a.getMesh().position.distanceTo(b.getMesh().position) < r;
-}
-
-function scale(x, r): number {
-  return Math.floor(x / r);
-}
-
-function getKey({x, y, z}): number {
-  return x * 7901 + 7907 * y + 7919 * z;
-}
-
-function optimizedFlocking(models: Array<Boid>, env: Environment): void {
-  const cache = new Map();
-  for (let idx = 0; idx < models.length; idx++) {
-    const model = models[idx];
-    const {position} = model.getMesh();
-    const key = getKey({
-      x: scale(position.x, env.active_neighbor_radius),
-      y: scale(position.y, env.active_neighbor_radius),
-      z: scale(position.z, env.active_neighbor_radius),
-    });
-    const list = cache.get(key) || [];
-    list.push(model);
-    cache.set(key, list);
-  }
-
-  for (let idx = 0; idx < models.length; idx++) {
-    const model = models[idx];
-    const {position} = model.getMesh();
-    const scaled = {
-      x: scale(position.x, env.active_neighbor_radius),
-      y: scale(position.y, env.active_neighbor_radius),
-      z: scale(position.z, env.active_neighbor_radius),
-    };
-    const neighbors = [];
-    let empty = 0;
-    for (let idx = -1; idx <= 1; idx++) {
-      for (let idy = -1; idy <= 1; idy++) {
-        for (let idz = -1; idz <= 1; idz++) {
-          // if (neighbors.length > 50) continue;
-          const key = getKey({
-            x: scaled.x + idx,
-            y: scaled.y + idy,
-            z: scaled.z + idz,
-          });
-          const potentialNeighbors = cache.get(key) || [];
-          for (let it = 0; it < potentialNeighbors.length; it++) {
-            const p = potentialNeighbors[it];
-            if (isNeighbor(model, p, env.active_neighbor_radius)) {
-              neighbors.push(p);
-            }
-          }
-        }
-      }
-    }
-    applyFlocking(model, neighbors, env);
   }
 }
 
