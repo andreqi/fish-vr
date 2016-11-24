@@ -78,8 +78,13 @@ class Boid {
     }
   }
 
+  getDirection(): ThreeVector3 {
+    const origDirection = new three.Vector3(0, 0, 1);
+    return origDirection.applyQuaternion(this._mesh.quaternion);
+  }
+
   updateFromVector(vector: ThreeVector3): void {
-    const worldDirection = this._mesh.getWorldDirection();
+    const worldDirection = this.getDirection();
     this._mesh.lookAt(
       vector.add(worldDirection).add(this._mesh.position)
     );
@@ -94,10 +99,10 @@ class Boid {
   move(): void {
     const {position} = this._mesh;
     const velocity = 1 / 10.0;
-    const direction = this._mesh.getWorldDirection();
-    ['x', 'y', 'z'].forEach(
-      dim => position[dim] += direction[dim] * velocity
-    );
+    const direction = this.getDirection();
+    position.x += velocity * direction.x;
+    position.y += velocity * direction.y;
+    position.z += velocity * direction.z;
   }
 }
 

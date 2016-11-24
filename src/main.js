@@ -27,10 +27,10 @@ const main = ({setup, update}, deps, keyboard) => {
 const keyboard: {[key: string]: boolean} = {};
 const deps = {
   active_neighbor_radius: 5,
-  separation_weight: 90,
+  separation_weight: 50,
   alignment_weight: 250,
   surface_weight: 1900,
-  cohesion_weight: 6,
+  cohesion_weight: 9,
 };
 const world = main(BoidsWithMovement, deps, keyboard);
 window.world = world;

@@ -4,9 +4,11 @@ import type {TorusType} from '../actors/generateTorus.js';
 import type {ParticlesType} from '../actors/generateParticles.js';
 import type {LightType} from '../actors/LightType.js';
 import type {ThreeMesh} from '../actors/ThreeTypes.js';
+import type Finder from '../finders/Finder.js';
 
 const Boid = require('../actors/Boid.js');
 const FishTorus = require('../actors/FishTorus.js');
+const NaiveFinder = require('../finders/NaiveFinder.js');
 
 const three = require('three');
 
@@ -47,7 +49,7 @@ function getRandomRotation(): {x: number, y: number, z: number} {
 function generateBoids(): {object: ThreeMesh, models: Array<Boid>} {
   const models: Array<Boid> = [];
   const object = new three.Object3D();
-  for (let idx = 0; idx < 1000; idx++) {
+  for (let idx = 0; idx < 2000; idx++) {
     models.push(
       new Boid(
         FishTorus.getRandomPoint(),
@@ -62,18 +64,8 @@ function generateBoids(): {object: ThreeMesh, models: Array<Boid>} {
   };
 }
 
-function generateSphere(): {object: ThreeMesh} {
-  const geometry = new three.SphereGeometry(35, 32, 32);
-  const material = new three.MeshPhongMaterial({
-    color: 0xFFFFcc,
-    wireframe: true,
-  });
-  return {object: new three.Mesh(geometry, material)}
-}
-
 function setup(_: any, deps: Environment): State {
   const actors: AvailableActors = {
-    // sphere: generateSphere(),
     boids: generateBoids(),
     ambientLight: {
       object: new three.AmbientLight(0xaaaaaa)
@@ -90,8 +82,10 @@ function setup(_: any, deps: Environment): State {
 
 function update(t: number, {actors, environment}: State): void {
   const {models} = actors.boids;
-  optimizedFlocking(models, environment);
-  models.forEach(model => model.move());
+  flocking(models, new NaiveFinder(models), environment);
+  for (let idx = 0; idx < models.length; idx++) {
+    models[idx].move();
+  }
 }
 
 function isNeighbor(a: Boid, b: Boid, r: number): boolean {
@@ -135,6 +129,7 @@ function optimizedFlocking(models: Array<Boid>, env: Environment): void {
     for (let idx = -1; idx <= 1; idx++) {
       for (let idy = -1; idy <= 1; idy++) {
         for (let idz = -1; idz <= 1; idz++) {
+          // if (neighbors.length > 50) continue;
           const key = getKey({
             x: scaled.x + idx,
             y: scaled.y + idy,
@@ -154,20 +149,16 @@ function optimizedFlocking(models: Array<Boid>, env: Environment): void {
   }
 }
 
-function naiveFlocking(models: Array<Boid>, env: Environment): void {
+function flocking(
+  models: Array<Boid>,
+  finder: Finder,
+  env: Environment,
+): void {
   for (let idx = 0; idx < models.length; idx++) {
-    const neighbors = [];
-    const activePos = models[idx].getMesh().position;
-    for (let idy = 0; idy < models.length; idy++) {
-      if (idx === idy) {
-        continue;
-      }
-      const neighborPos = models[idy].getMesh().position;
-      const distance = neighborPos.distanceTo(activePos);
-      if (distance < env.active_neighbor_radius) {
-        neighbors.push(models[idy]);
-      }
-    }
+    const neighbors = finder.findNeighbors(
+      models[idx],
+      env.active_neighbor_radius,
+    );
     applyFlocking(models[idx], neighbors, env);
   }
 }
@@ -195,7 +186,7 @@ function applyFlocking(
     const buffer = new three.Vector3(0, 0, 0);
     const neighborPos = boid.getMesh().position;
     buffer.add(neighborPos).multiplyScalar(-1).add(activePos);
-    alignment.add(boid.getMesh().getWorldDirection());
+    alignment.add(boid.getDirection());
     separation.add(buffer);
     cohesion.add(neighborPos);
   }

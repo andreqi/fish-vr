@@ -46,7 +46,7 @@ function generateCubeMap(): ThreeMesh {
   return grid;
 }
 
-function setup(_: any, {texture}: any): State {
+function setup(): State {
   const boidModel = new Boid();
   return {
     actors: {
@@ -59,7 +59,7 @@ function setup(_: any, {texture}: any): State {
       },
       directionalLight: generateDirectionalLigth(),
       cubeMap: {
-        object: generateCubeMap(texture),
+        object: generateCubeMap(),
       },
     },
     env: {},
