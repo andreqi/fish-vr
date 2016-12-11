@@ -3,14 +3,14 @@
 import type Scenario from '../Scenario.js';
 
 function genRenderLoop(
-  {camera, controls, renderer, scene}: Scenario,
+  scenario: Scenario,
   update: (t: number) => void,
 ): () => void {
   let t = 0;
   return function renderLoop() {
-    controls.update();
+    scenario.controls.update();
     update(t);
-    renderer.render(scene, camera);
+    scenario.renderer.render(scenario.scene, scenario.camera);
     t += 1/60;
     requestAnimationFrame(renderLoop);
   }

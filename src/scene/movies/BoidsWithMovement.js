@@ -10,6 +10,7 @@ const Boid = require('../actors/Boid.js');
 const FishTorus = require('../actors/FishTorus.js');
 const NaiveFinder = require('../finders/NaiveFinder.js');
 const BucketFinder = require('../finders/BucketFinder.js');
+const KDTree = require('../finders/KDTree.js');
 
 const three = require('three');
 
@@ -49,7 +50,7 @@ function getRandomRotation(): {x: number, y: number, z: number} {
 function generateBoids(): {object: ThreeMesh, models: Array<Boid>} {
   const models: Array<Boid> = [];
   const object = new three.Object3D();
-  for (let idx = 0; idx < 2000; idx++) {
+  for (let idx = 0; idx < 1000; idx++) {
     models.push(
       new Boid(
         FishTorus.getRandomPoint(),
@@ -83,7 +84,7 @@ function update(t: number, {actors, environment}: State): void {
   const {models} = actors.boids;
   flocking(
     models,
-    new BucketFinder(models, environment),
+    new KDTree(models),
     environment,
   );
   for (let idx = 0; idx < models.length; idx++) {
