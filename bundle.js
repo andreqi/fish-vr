@@ -42943,7 +42943,7 @@
 	  // camera
 	  this.camera = new three.PerspectiveCamera(90, // angle adjust perspective
 	  window.innerWidth / window.innerHeight, 0.1, 100);
-	  this.camera.position.set(0, 0, 30);
+	  this.camera.position.set(0, 0, 0);
 	  this.camera.focalLength = this.camera.position.distanceTo(this.scene.position);
 	
 	  // controls
